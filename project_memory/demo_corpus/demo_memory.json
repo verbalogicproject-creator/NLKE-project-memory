@@ -1,0 +1,101 @@
+{
+  "_about": "A zero-setup demo memory for 'Orchard', a fictional local-first notes app. Every row has an explicit id + created_at so the demo is fully deterministic. Loaded by project_memory.demo.build_demo().",
+  "episodes": [
+    {
+      "id": "ep-sqlite",
+      "content": "We chose SQLite over Postgres for Orchard's store because the app is local-first and must run with zero ops on a user's machine.",
+      "kind": "decision",
+      "tags": ["storage", "sqlite", "local-first"],
+      "created_at": "2026-01-05T09:00:00+00:00"
+    },
+    {
+      "id": "ep-fts5",
+      "content": "We chose SQLite FTS5 + BM25 for note search so search works fully offline with no external service.",
+      "kind": "decision",
+      "tags": ["search", "fts5", "offline"],
+      "created_at": "2026-01-06T09:00:00+00:00"
+    },
+    {
+      "id": "ep-fts-null",
+      "content": "Gotcha: FTS5 external-content triggers crash on NULL columns; every trigger value must be coalesced to '' or inserts fail silently.",
+      "kind": "gotcha",
+      "tags": ["fts5", "sqlite", "triggers"],
+      "created_at": "2026-01-07T09:00:00+00:00"
+    },
+    {
+      "id": "ep-recency",
+      "content": "Insight: most note recall is recency-biased — users look for what they touched this week, so created_at ordering matters more than raw relevance.",
+      "kind": "insight",
+      "tags": ["recall", "recency", "ux"],
+      "created_at": "2026-01-08T09:00:00+00:00"
+    },
+    {
+      "id": "ep-offline",
+      "content": "Invariant: note search must keep working with no network. Any feature that adds a hard network dependency to search is rejected.",
+      "kind": "invariant",
+      "tags": ["offline", "search", "invariant"],
+      "created_at": "2026-01-09T09:00:00+00:00"
+    },
+    {
+      "id": "ep-tz",
+      "content": "Gotcha: created_at was stored as a naive local datetime, so notes reordered when the user changed timezones. Fixed by storing UTC ISO-8601 everywhere.",
+      "kind": "gotcha",
+      "tags": ["timezone", "created_at", "bug"],
+      "created_at": "2026-01-10T09:00:00+00:00"
+    },
+    {
+      "id": "ep-auth-defer",
+      "content": "We decided to defer multi-user auth to v2; v1 is single-user local, so auth is not on the critical path.",
+      "kind": "decision",
+      "tags": ["auth", "scope", "v2"],
+      "created_at": "2026-01-11T09:00:00+00:00"
+    },
+    {
+      "id": "ep-v01",
+      "content": "Milestone: Orchard v0.1 shipped — local notes, offline FTS5 search, UTC timestamps.",
+      "kind": "milestone",
+      "tags": ["release", "v0.1"],
+      "created_at": "2026-01-12T09:00:00+00:00"
+    }
+  ],
+  "facts": [
+    {
+      "id": "ft-sqlite",
+      "claim": "SQLite is Orchard's store of record.",
+      "reason": "Local-first, zero-ops, single-file backups.",
+      "source_episode_id": "ep-sqlite",
+      "tags": ["storage", "sqlite"],
+      "created_at": "2026-01-05T09:05:00+00:00"
+    },
+    {
+      "id": "ft-offline-search",
+      "claim": "Note search runs fully offline.",
+      "reason": "FTS5 + BM25 over local rows; no network in the search path.",
+      "source_episode_id": "ep-fts5",
+      "tags": ["search", "offline", "fts5"],
+      "created_at": "2026-01-06T09:05:00+00:00"
+    },
+    {
+      "id": "ft-utc",
+      "claim": "All timestamps are stored as UTC ISO-8601.",
+      "reason": "A naive-local created_at reordered notes across timezone changes.",
+      "source_episode_id": "ep-tz",
+      "tags": ["timezone", "created_at"],
+      "created_at": "2026-01-10T09:05:00+00:00"
+    },
+    {
+      "id": "ft-token-security",
+      "claim": "From a security perspective, storing access tokens in plaintext is an unacceptable risk.",
+      "reason": "A single DB leak would expose every user's live sessions.",
+      "tags": ["security", "tokens"],
+      "created_at": "2026-01-11T10:00:00+00:00"
+    },
+    {
+      "id": "ft-token-business",
+      "claim": "From a business perspective, the legacy plaintext token store was cheap and worked fine.",
+      "reason": "It shipped on time and never caused a support ticket.",
+      "tags": ["business", "tokens"],
+      "created_at": "2026-01-11T10:05:00+00:00"
+    }
+  ]
+}
