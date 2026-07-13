@@ -1,0 +1,93 @@
+# portfolio-edges.yaml — the declared edge manifest for the Portfolio Brain.
+#
+# Materialized from PORTFOLIO-BRAIN-SPEC.md's manifest (composition, open-core
+# twins, built-by), plus one appended M5-follow-up block (the termux
+# app-builder edges, clearly marked below — not in the original spec manifest).
+# This file is the *candidate* set — `scripts/index_portfolio.py` (via
+# `project_memory.portfolio.verify_edge`) checks each `source -> target` pair
+# against both repos' own docs at ingest time and DROPS any pair neither side
+# actually asserts, rather than silently ingesting an unverified relationship.
+# See CHANGELOG.md / the indexer's printed report for exactly what was kept vs.
+# dropped, and why.
+
+composes_depends_on:
+  - source: ngfify
+    targets: [universal_parser]
+    note: "parse front-end"
+  - source: frontmatter_rag
+    targets: [declared_core]
+  - source: kg_toolkit
+    targets: [declared_core]
+  - source: declared_rules
+    targets: [declared_core]
+  - source: rag_evaluator
+    targets: [declared_core, frontmatter_rag, kg_toolkit]
+    note: "scores"
+  - source: scaffold_kg_rag_agent
+    targets: [declared_core, frontmatter_rag, kg_toolkit, declared_rules, rag_evaluator, persona_guard, declarum-substrate]
+    note: "capstone-of"
+  - source: aisle-wedding-copilot
+    targets: [Aisle-demo]
+    note: "recipe-for"
+  - source: Aisle-demo
+    targets: [scaffold_kg_rag_agent, sag-declarum-atlas-framework, taste-skill-main]
+  - source: codebase-memorizer
+    targets: [ctx-architecture]
+    note: "reads Map's architecture.ctx"
+  - source: vouch
+    targets: [ctx-architecture, codebase-memorizer]
+    note: "optional KG compose (\"the trio\")"
+  - source: verbalogix
+    targets: [ctx-architecture, codebase-memorizer, vouch]
+    note: "orchestrates"
+
+  # ── M5 follow-up: termux app-builder edges (not in the original spec manifest) ──
+  # Added after M5 indexed the five termux repos, to wire them into the edge graph
+  # (closes the "Not built" note in MEMORY-SYSTEM-MVP-TO-V1.0-SPEC.md's M5). Each
+  # pair is grounded in one side's own edge-docs and survives `verify_edge`.
+  # Name co-occurrence alone was NOT treated as an edge: `declared_repo_factory`
+  # names `canvas-os` (only to note where `aria-core` is vendored) and the atlas
+  # framework names `jewelry-current` (only as a `file:`-ref packaging precedent) —
+  # references, not compositions, so both are deliberately omitted.
+  - source: nlke-declarum-model-01-coding
+    targets: [gemini-KG-RAG-coding-expert]
+    note: "ingests its Graph-RAG KG (32 docs + ~22 exemplars) as a corpus source"
+  - source: Aisle-demo
+    targets: [voice-graph-rag]
+    note: "voice-graph-rag serves as the co-pilot spine under Aisle's skin"
+  - source: aisle-wedding-copilot
+    targets: [voice-graph-rag]
+    note: "voice + serve spine (HybridFusion)"
+  - source: sag-declarum-atlas-framework
+    targets: [voice-graph-rag]
+    note: "wraps voice-graph-rag's aria-core as substrate (@atlas/* re-export/extend)"
+
+public_twin_of:
+  - source: codebase-memorizer
+    targets: [project_memory]
+    note: "public-simple twin of the moat engine"
+  - source: vouch
+    targets: [persona_guard]
+    note: "public refuse-to-fabricate twin"
+  - source: ctx-architecture
+    targets: [ngfify]
+    note: "both derive declared docs from source"
+
+built_by:
+  - source: declared_repo_factory
+    targets:
+      - universal_parser
+      - ngfify
+      - declared_core
+      - frontmatter_rag
+      - kg_toolkit
+      - declared_rules
+      - rag_evaluator
+      - scaffold_kg_rag_agent
+      - persona_guard
+      - claude_workload_optimizer
+      - declarum-substrate
+      - ctx-architecture
+      - codebase-memorizer
+      - vouch
+      - verbalogix

@@ -1,6 +1,6 @@
 # project_memory
 
-[![tests](https://img.shields.io/badge/tests-97%20passing-brightgreen)](tests/)
+[![tests](https://img.shields.io/badge/tests-260%20passing-brightgreen)](tests/)
 [![python](https://img.shields.io/badge/python-3.10%2B-blue)](pyproject.toml)
 [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![deps](https://img.shields.io/badge/required%20deps-1-blue)](pyproject.toml)
@@ -24,7 +24,7 @@ semantic signal is optional and degrades *byte-identically* to lexical.
 `declared_core` isn't on PyPI yet, so install the engine first (one line), then this:
 
 ```bash
-pip install -e ../declared_core     # the engine (clone it alongside this repo)
+pip install -e ../declared_core m    # the engine (clone it alongside this repo)
 pip install -e .                    # project_memory
 ```
 
@@ -122,7 +122,8 @@ door, the ask surface, and the synthesis-mud guard.
   6-layer compatibility check, and **refuse / bridge / clean** with a *calibrated*
   confidence. Catches opinion-as-fact, perspective collision, certainty inflation.
 - **A curated dimension palette** — 12 declared, deterministic [0,1] scorers (no ML).
-- **CLI + MCP server** — `project-memory …` (all `--json`) and a stdlib MCP server.
+- **CLI + MCP servers** — `project-memory …` (all `--json`) and two stdlib MCP
+  servers (core memory; Portfolio Brain resources/prompts/tools).
 - **Optional dense recall** — bring any embedder; it degrades to nothing cleanly.
 
 ## Feature / API map
@@ -138,12 +139,109 @@ door, the ask surface, and the synthesis-mud guard.
 | Score by dimension | `optimize_for` ask / `dimensions.score` | `dimensions.py` |
 | Add semantic recall | `ProjectMemory.open(..., embedder=…)` | `dense.py` |
 | Serve to an agent | `examples/mcp_server.py` | examples |
+| Serve the Portfolio Brain to an agent | `examples/mcp_portfolio_server.py` | examples |
+
+## Portfolio Brain & Graph Memory (internal capability, `project_memory.{portfolio,artifact,pack,graph}`)
+
+`project_memory` can also index **the whole `~/projects` ecosystem into itself** —
+the "recursive close": the substrate builds a declared memory of its own body of
+work, one flat dimension per repo (`batch=<repo name>`), one `remember()` atom per
+declared interface (a committed `ai_card`, a repo's own "Public API" doc section,
+or an `ngfify`-auto-declared fallback), and the cross-repo composition/twin/built-by
+graph as verified `record_fact()` edges — verified against each repo's own docs at
+ingest time, not taken on a manifest's say-so (an edge neither repo asserts is
+**dropped, not ingested**). This is an internal capability (a private moat tool, not
+part of the published surface) — see [`PORTFOLIO-BRAIN-SPEC.md`](PORTFOLIO-BRAIN-SPEC.md)
+for the design and `project_memory/portfolio.py` for the implementation.
+
+```bash
+pip install -e '.[portfolio]'                 # PyYAML + ngfify (the auto-declare fallback)
+python scripts/index_portfolio.py             # builds portfolio.db over ~/projects
+python examples/recursive_close.py            # real CLI `ask`/`recall` queries against it
+```
+
+**On top of the index, a second layer turns it into live context injection** — the
+part that makes an agent session *wake up already aware* of a repo instead of
+re-scanning it, see [`MEMORY-SYSTEM-MVP-SPEC.md`](MEMORY-SYSTEM-MVP-SPEC.md) and
+[`MEMORY-SYSTEM-MVP-TO-V1.0-SPEC.md`](MEMORY-SYSTEM-MVP-TO-V1.0-SPEC.md) for the
+full design + upgrade ladder:
+
+- **`build_artifact`** (`artifact.py`) — a provider-neutral markdown block (identity,
+  interfaces, 1-hop relationships, what-to-do) for one project, or a **pack**
+  (`.pack.md` — a hand-curated, annotated bundle of member projects + a prompt;
+  three real ones ship: `aisle`, `verbalogix-suite`, `aria-app-builder`).
+- **`brain load <name>` / `brain menu`** (CLI) — print any project's or pack's
+  artifact on demand; `menu` lists everything and lets you pick.
+- **A Claude Code `SessionStart` hook** — auto-injects the current repo's artifact
+  into a fresh session via `additionalContext`, verified live against a real
+  session with zero repo-scanning tool calls.
+- **`graph.walk`** (`graph.py`, M1) — `brain load <name> --hops 2` rescores a real
+  1-2 hop BFS over the verified edges (a declared, transparent weight-per-category
+  formula, not a learned model), opt-in so the hook's default payload stays small.
+- **`brain remember` / `brain ingest-memory`** (`session_memory.py`, M2) — an
+  accreted, project-scoped decision log: `brain remember "we chose X because Y"`
+  crystallizes a supersedable fact that shows up in that project's artifact under
+  "Recent memory"; `brain ingest-memory` pulls Claude Code's own per-project
+  `~/.claude/.../memory/*.md` files into the same store (only `type: project`
+  memories by default — the other types are about Eyal, not the project).
+- **Reach expansion** (M5) — `RepoSpec.path` lets a repo live outside the shared
+  `~/projects` root (termux paths, shared storage) instead of only `root/name`;
+  `index_portfolio` and `verify_edge` resolve it transparently. Five termux repos
+  are indexed this way, driving the `aria-app-builder` pack.
+- **MCP breadth** (`export/mcp_portfolio.py`, M6) — a second MCP server
+  fronting the Portfolio Brain itself: a **resource** per known project/pack
+  (`portfolio://project/<name>`, `portfolio://pack/<id>`) that reads back its
+  `build_artifact` snapshot, a **`load_context` prompt** to pull one into a
+  conversation turn mid-session (closing the "no on-demand pull yet" gap),
+  and one idempotent **`brain_reindex` tool**.
+- **Provider-agnostic file export** (`export/files.py` + `brain export`, M6) —
+  the same artifact, written as an idempotent marker-delimited block into
+  `CLAUDE.md`/`AGENTS.md`/`GEMINI.md` — the on-disk convention Claude
+  Code/Codex/Gemini CLI/Google Antigravity each read at session start
+  (Antigravity shares Codex's `AGENTS.md`, not a file of its own — verified
+  against its own docs). A rerun replaces only project_memory's own block,
+  leaving any hand-written instructions elsewhere in the file untouched.
+- **Load/use provenance + functional-journey** (`provenance.py` + `brain
+  used`/`journey`/`unused`, M4) — every load is already an episode; M4 adds a
+  declared `used` marker, a per-session **journey** that reconstructs a session's
+  ordered load/use/export events as a story, and an **unused** report ("which
+  packs did I load and never use?"). Built on the load log the brain already
+  keeps (not a second `brain-loads.log`), session-scoped via the episodes'
+  `session_id` (which the `SessionStart` hook now passes through). A load counts
+  as used only when *explicitly* marked — declared, not inferred.
+
+```bash
+project-memory brain load declared_core                 # one project's artifact
+project-memory brain load declared_core --hops 2         # + rescored 2-hop neighbors
+project-memory brain load aisle                          # a pack: 4 members + one prompt
+project-memory brain load aria-app-builder                # a pack spanning termux repos
+project-memory brain menu                                 # list everything, pick one
+project-memory brain remember "we chose SQLite" --current --reason "zero-ops"
+project-memory brain ingest-memory --current              # pull in Claude's own memory files
+project-memory brain export declared_core --provider all   # write CLAUDE.md/AGENTS.md/GEMINI.md
+project-memory brain used declared_core --session $S       # mark a load actually used (M4)
+project-memory brain journey --session $S                  # reconstruct a session as a story
+project-memory brain unused --packs                        # packs loaded but never used
+```
+
+Proven, not claimed: every piece above has a green test file (`tests/test_artifact.py`,
+`test_pack.py`, `test_pack_binding.py`, `test_graph.py`, `test_session_memory.py`,
+`test_session_start_hook.py`, `test_cli.py`, `test_portfolio.py`,
+`test_export_mcp_portfolio.py`, `test_export_files.py`, `test_provenance.py`) and
+has been dogfooded end-to-end, including against real, unmodified Claude Code
+memory files, a real live export run, and real load/journey provenance reports
+over the live `portfolio.db`. Explicitly **not** in this layer yet — a TUI and
+dense/embedding recall over the portfolio store — see [`ROADMAP.md`](ROADMAP.md)
+for the honest list.
 
 ## Prerequisites
 
 - **Python ≥ 3.10**
 - **`declared_core`** (the engine) — clone it beside this repo; `pip install -e ../declared_core`.
 - **numpy** — only for the optional `[dense]` extra.
+- **PyYAML + `ngfify`** — only for the optional `[portfolio]` extra (indexing; needed by
+  `portfolio.py`'s edge-manifest loading and the `ngfify` auto-declare fallback). `artifact.py` /
+  `pack.py` / `graph.py` (the context-injection + graph-walk layer) add no further dependencies.
 
 ## Repo layout
 
@@ -161,10 +259,24 @@ project_memory/
 ├── presets.py        # ready MemorySchemas (generic / agent / research)
 ├── cli.py            # the `project-memory` command
 ├── demo.py           # build_demo() + hash_embedder()
+├── portfolio.py      # index ~/projects into the store (internal capability, see below)
+├── artifact.py       # build_artifact — the provider-neutral context block (+ pack composition)
+├── pack.py           # .pack.md file format: load_pack / find_pack / list_packs
+├── graph.py          # BFS + declared rescoring over verified edges (M1)
+├── session_memory.py # ingest Claude Code's own memory/*.md files as episodes (M2)
+├── provenance.py     # load/use markers + a session's journey story (M4)
+├── export/           # provider-agnostic export adapters (M6)
+│   ├── mcp_portfolio.py  # Portfolio Brain MCP: resources/prompts/tools
+│   └── files.py          # CLAUDE.md/AGENTS.md/GEMINI.md idempotent block export
+├── packs/            # the real .pack.md files (aisle, verbalogix-suite, aria-app-builder)
 └── demo_corpus/      # a deterministic demo memory (JSON)
 docs/                 # numbered teaching chapters 00–10
-examples/             # runnable, self-verifying; incl. an MCP server
-tests/                # 97 tests
+examples/             # runnable, self-verifying; incl. two MCP servers + recursive_close.py
+scripts/              # index_portfolio.py + session_start_hook.{sh,py} (Claude Code auto-injection)
+portfolio-edges.yaml  # the declared composition/twin/built-by edge manifest
+MEMORY-SYSTEM-MVP-SPEC.md          # the graph-memory/context-injection MVP design
+MEMORY-SYSTEM-MVP-TO-V1.0-SPEC.md  # the upgrade ladder past the MVP
+tests/                # 325 tests
 ```
 
 ## Design choices (why it's built this way)

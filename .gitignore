@@ -25,6 +25,11 @@ htmlcov/
 *.sqlite
 *.sqlite3
 
+# Local env / secrets (never commit — keys, tokens)
+.env
+.env.*
+!.env.example
+
 # OS / editor
 .DS_Store
 *.swp

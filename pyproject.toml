@@ -39,6 +39,12 @@ dependencies = [
 # pure-lexical + structural and is byte-for-byte deterministic. numpy powers the
 # brute-force cosine index (via declared-core[dense]).
 dense = ["declared-core[dense]>=0.1", "numpy>=1.21"]
+# The portfolio-brain layer (project_memory.portfolio, scripts/index_portfolio.py)
+# is an internal capability, not part of the core library: PyYAML reads
+# portfolio-edges.yaml, and ngfify is the auto-declare fallback for repos with
+# no committed ai_card and no "Public API" doc section. Neither is needed to
+# `import project_memory` or use ProjectMemory directly.
+portfolio = ["pyyaml>=6.0", "ngfify>=0.1.0,<0.2"]
 # Everything needed to run the test suite.
 dev = ["pytest>=7.0", "numpy>=1.21"]
 

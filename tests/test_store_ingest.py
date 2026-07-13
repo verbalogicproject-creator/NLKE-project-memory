@@ -42,6 +42,19 @@ def test_auto_fact_crystallizes(mem):
     assert mem.count() == {"episodes": 1, "facts": 1}
 
 
+def test_remember_auto_fact_can_supersede(mem):
+    """`remember(auto_fact=True, supersedes=...)` retires the old fact in the
+    same call — "this decision replaces that one," one step, not two (M2:
+    `brain remember --supersedes <id>`)."""
+    old = mem.record_fact("we use SQLite", id="old-decision")
+    r = mem.remember("we migrated to Postgres", kind="decision",
+                      auto_fact=True, supersedes=old["id"])
+    assert r["fact_id"]
+    statuses = {row[0]: row[1] for row in mem.conn.execute("SELECT id, status FROM facts").fetchall()}
+    assert statuses["old-decision"] == "superseded"
+    assert statuses[r["fact_id"]] == "active"
+
+
 def test_episodes_are_append_only(mem):
     mem.remember("same event", kind="general")
     mem.remember("same event", kind="general")
@@ -83,3 +96,17 @@ def test_explicit_id_and_created_at_are_deterministic():
     ra = a.conn.execute("SELECT id, created_at FROM episodes").fetchone()
     rb = b.conn.execute("SELECT id, created_at FROM episodes").fetchone()
     assert ra == rb
+
+
+def test_remember_same_id_twice_is_a_no_op(mem):
+    """A deterministic-id re-run (the portfolio indexer's case) must not crash —
+    it's a benign no-op, not a duplicate row."""
+    mem.remember("same content", kind="general", id="dup")
+    mem.remember("same content", kind="general", id="dup")  # must not raise
+    assert mem.count()["episodes"] == 1
+
+
+def test_record_fact_same_id_twice_is_a_no_op(mem):
+    mem.record_fact("same claim", id="dupfact")
+    mem.record_fact("same claim", id="dupfact")  # must not raise
+    assert mem.count()["facts"] == 1

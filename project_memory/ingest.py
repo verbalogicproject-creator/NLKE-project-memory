@@ -42,8 +42,13 @@ def remember(
     created_at: str | None = None,
     auto_fact: bool = False,
     reason: str | None = None,
+    supersedes: str | None = None,
 ) -> dict[str, Any]:
     """Append an episode. With ``auto_fact=True`` also crystallize it as a fact.
+
+    ``supersedes`` (only meaningful with ``auto_fact=True``) retires that fact
+    id in the same call — "this decision replaces that one" in one step,
+    instead of a separate ``record_fact`` call.
 
     Returns ``{"id", "kind", "fact_id"}`` (``fact_id`` is ``None`` unless a fact
     was crystallized).
@@ -55,7 +60,10 @@ def remember(
     ep_id = id or new_id()
     ts = created_at or now_iso()
     conn.execute(
-        f"INSERT INTO {schema.episode_table} "
+        # OR IGNORE: a caller-supplied deterministic `id` colliding with an
+        # existing row means "this exact episode was already remembered" (the
+        # portfolio indexer's re-run case) — a benign no-op, not an error.
+        f"INSERT OR IGNORE INTO {schema.episode_table} "
         "(id, content, kind, session_id, batch, tags, metadata, method, schema_version, created_at) "
         "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
         (
@@ -70,7 +78,7 @@ def remember(
         fact_id = record_fact(
             conn, schema, content,
             reason=reason, source_episode_id=ep_id, tags=tags,
-            method="auto_fact", created_at=ts,
+            method="auto_fact", created_at=ts, supersedes=supersedes,
         )["id"]
 
     conn.commit()
@@ -101,7 +109,10 @@ def record_fact(
     fact_id = id or new_id()
     ts = created_at or now_iso()
     conn.execute(
-        f"INSERT INTO {schema.fact_table} "
+        # OR IGNORE: same rationale as `remember` — a deterministic id colliding
+        # with an existing row (the portfolio indexer's re-run case) is a
+        # benign no-op, not an error.
+        f"INSERT OR IGNORE INTO {schema.fact_table} "
         "(id, claim, reason, source_episode_id, tags, method, schema_version, created_at, updated_at) "
         "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)",
         (
