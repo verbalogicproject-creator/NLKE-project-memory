@@ -3,13 +3,14 @@
 [![tests](https://img.shields.io/badge/tests-260%20passing-brightgreen)](tests/)
 [![python](https://img.shields.io/badge/python-3.10%2B-blue)](pyproject.toml)
 [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
-[![deps](https://img.shields.io/badge/required%20deps-1-blue)](pyproject.toml)
+[![deps](https://img.shields.io/badge/required%20deps-0-blue)](pyproject.toml)
 
 **A declared, AI-optional memory for agents and projects.** Remember what happened
 (*episodes*) and what you concluded (*facts*); recall it in natural language; and —
 the part no other memory has — refuse to synthesize contradictory facts into MUD.
 
-Local-first, deterministic, `$0`. One required dependency ([`declared_core`](https://github.com/verbalogicproject-creator/NLKE-declared_core), the retrieval engine). No API keys. A dense
+Local-first, deterministic, `$0`. Zero required dependencies — the retrieval engine
+([`declared_core`](https://github.com/verbalogicproject-creator/NLKE-declared_core)) is vendored in-repo. No API keys. A dense
 semantic signal is optional and degrades *byte-identically* to lexical.
 
 > **The thesis:** *declared > inferred.* You write down the structure of what you
@@ -21,11 +22,10 @@ semantic signal is optional and degrades *byte-identically* to lexical.
 
 ## Quickstart (60 seconds)
 
-`declared_core` isn't on PyPI yet, so install the engine first (one line), then this:
+Install it standalone — the `declared_core` engine is vendored in-repo, so there's nothing else to clone:
 
 ```bash
-pip install -e ../declared_core m    # the engine (clone it alongside this repo)
-pip install -e .                    # project_memory
+pip install -e .                    # project_memory (declared_core is vendored)
 ```
 
 ```python
@@ -155,7 +155,7 @@ part of the published surface) — see [`PORTFOLIO-BRAIN-SPEC.md`](PORTFOLIO-BRA
 for the design and `project_memory/portfolio.py` for the implementation.
 
 ```bash
-pip install -e '.[portfolio]'                 # PyYAML + ngfify (the auto-declare fallback)
+pip install -e '.[portfolio]'                 # PyYAML only (ngfify — the auto-declare fallback — is vendored)
 python scripts/index_portfolio.py             # builds portfolio.db over ~/projects
 python examples/recursive_close.py            # real CLI `ask`/`recall` queries against it
 ```
@@ -236,12 +236,13 @@ for the honest list.
 
 ## Prerequisites
 
-- **Python ≥ 3.10**
-- **`declared_core`** (the engine) — clone it beside this repo; `pip install -e ../declared_core`.
+- **Python ≥ 3.10** — that's the whole hard requirement.
+- **`declared_core`** (the engine) — vendored in-repo (see `VENDORED.json`); no separate install.
 - **numpy** — only for the optional `[dense]` extra.
-- **PyYAML + `ngfify`** — only for the optional `[portfolio]` extra (indexing; needed by
-  `portfolio.py`'s edge-manifest loading and the `ngfify` auto-declare fallback). `artifact.py` /
-  `pack.py` / `graph.py` (the context-injection + graph-walk layer) add no further dependencies.
+- **PyYAML** — only for the optional `[portfolio]` extra (indexing; `portfolio.py`'s
+  edge-manifest loading). `ngfify` (the auto-declare fallback) + `universal_parser` are
+  vendored too, so the extra adds no dependency for them. `artifact.py` / `pack.py` /
+  `graph.py` (the context-injection + graph-walk layer) add no further dependencies.
 
 ## Repo layout
 

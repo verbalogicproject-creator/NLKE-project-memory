@@ -32,8 +32,7 @@ fact and inflating confidence. `project_memory` takes the other path:
 ## Install
 
 ```bash
-pip install -e ../declared_core      # the engine (not yet on PyPI)
-pip install -e .                     # project_memory
+pip install -e .                     # project_memory, standalone (declared_core is vendored)
 project-memory demo
 ```
 
@@ -47,8 +46,8 @@ project-memory demo
 
 ## Compatibility
 
-Python ≥ 3.10. One required dependency (`declared_core`); `numpy` only for
-`[dense]`. Local-first, offline, `$0`.
+Python ≥ 3.10. No required dependencies — the `declared_core` engine is vendored
+in-repo; `numpy` only for `[dense]`. Local-first, offline, `$0`.
 
 ## What's next
 

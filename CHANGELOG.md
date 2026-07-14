@@ -18,6 +18,15 @@ entirely on the existing engine, no retrieval-math changes (BFS over the portfol
 own edge-fact convention lives in `graph.py`, not `declared_core` — see that file's
 module docstring for why).
 
+### Changed
+
+- **`declared_core` is now vendored** — a byte-identical in-repo copy ships in this
+  repo (see `VENDORED.json`, regenerated via `tools/revendor.py`), so the
+  `declared-core` dependency is dropped. `ngfify` + `universal_parser` are vendored
+  the same way for the portfolio path, so the `[portfolio]` extra is now just
+  PyYAML. `pip install project-memory` works standalone. No public API or behavior
+  change.
+
 ### Added — indexing (`portfolio.py`)
 
 - **`project_memory/portfolio.py`** — the portfolio layer over the existing

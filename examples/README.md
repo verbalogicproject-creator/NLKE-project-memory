@@ -4,8 +4,7 @@ Runnable, self-verifying scripts. Each ends by printing **`Verify your build: ok
 — if you see that line, that feature works in your install.
 
 ```bash
-pip install -e ../declared_core      # the engine (not yet on PyPI)
-pip install -e ".[dev]"              # from the repo root
+pip install -e ".[dev]"              # from the repo root (declared_core is vendored)
 python examples/01_remember_and_recall.py
 ```
 

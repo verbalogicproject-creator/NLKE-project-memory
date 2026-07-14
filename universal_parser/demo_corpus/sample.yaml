@@ -1,0 +1,7 @@
+service: demo
+replicas: 3
+endpoints:
+  - name: health
+    path: /healthz
+  - name: metrics
+    path: /metrics

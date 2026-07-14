@@ -1,0 +1,21 @@
+/* Demo stylesheet for ngfify's CSS deriver. */
+
+@import url("./tokens.css");
+
+:root {
+  --brand-color: #4b7bec;
+}
+
+.card {
+  color: var(--brand-color);
+}
+
+#header {
+  font-weight: bold;
+}
+
+@media (max-width: 600px) {
+  .card {
+    padding: 4px;
+  }
+}

@@ -1,0 +1,4 @@
+2026-01-05 [INFO] service started on port 8080
+2026-01-05 [WARN] cache miss for key user:42
+2026-01-05 [ERROR] connection to 10.0.0.5 timed out
+plain line with no timestamp or level marker

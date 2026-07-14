@@ -1,0 +1,9 @@
+{
+  "project": "demo",
+  "version": 1,
+  "tags": ["parsing", "confidence", "schema"],
+  "owner": {
+    "name": "demo-user",
+    "contact": "demo-user@example.com"
+  }
+}

@@ -64,7 +64,7 @@ mem = build_demo(embedder=hash_embedder())
 ## Installing the extra
 
 ```bash
-pip install -e ".[dense]"     # adds numpy (via declared-core[dense])
+pip install -e ".[dense]"     # adds numpy
 ```
 
 `dense_available()` tells you whether numpy is importable. Without it,

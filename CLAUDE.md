@@ -10,13 +10,16 @@ eleven-strong natural-language *ask* surface, and a **synthesis-mud** epistemic
 guard that refuses to merge contradictory facts. It is a **thin layer on top of
 the `declared_core` engine** (a separate repo); retrieval math lives there.
 
-## Setup (declared_core is a local dependency)
+## Setup (declared_core is vendored in-repo)
 
-`declared-core` is not yet on PyPI. Install it first:
+`project_memory` installs standalone: the `declared_core` engine is **vendored**
+as a byte-identical in-repo copy (see `VENDORED.json`), so there is no sibling
+repo to install and no required PyPI dependency. For the portfolio layer,
+`ngfify` + `universal_parser` are vendored the same way, so its `[portfolio]`
+extra is just PyYAML.
 
 ```bash
 python -m venv .venv && source .venv/bin/activate
-pip install -e ../declared_core        # or wherever the engine repo is
 pip install -e ".[dev]"
 ```
 
@@ -73,8 +76,8 @@ project-memory ask "why not X?" --json   # the ask surface, scriptable
 
 ## What NOT to do
 
-- Do **not** add a required dependency beyond `declared-core`. numpy stays behind
-  the `[dense]` extra.
+- Do **not** add a required dependency. The vendored `declared_core` engine adds
+  none; numpy stays behind the `[dense]` extra.
 - Do **not** commit `*.db`, `.venv/`, or `__pycache__` (all gitignored).
 - Do **not** claim a feature in the README that isn't proven — put it in
   `ROADMAP.md` (a documented project value; the audience has real judgment).

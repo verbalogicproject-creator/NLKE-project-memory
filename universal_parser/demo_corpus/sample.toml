@@ -1,0 +1,8 @@
+title = "demo config"
+
+[owner]
+name = "demo-user"
+
+[database]
+port = 5432
+enabled = true

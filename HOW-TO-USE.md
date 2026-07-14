@@ -6,9 +6,10 @@ and [`docs/09-cli-reference.md`](docs/09-cli-reference.md).
 
 ## Install
 
+`project_memory` installs standalone — the `declared_core` engine is vendored in-repo.
+
 ```bash
-pip install -e ../declared_core     # the engine (not on PyPI yet)
-pip install -e .                    # project_memory  (add [dense] for numpy dense recall)
+pip install -e .            # project_memory  (add [dense] for numpy dense recall)
 ```
 
 ## Open a memory

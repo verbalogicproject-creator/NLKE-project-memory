@@ -38,15 +38,14 @@ project).
 
 ```bash
 python -m venv .venv && source .venv/bin/activate
-pip install -e ../declared_core        # the engine — not on PyPI yet, clone it beside this repo
-pip install -e ".[dev]"                # this repo + test deps
+pip install -e ".[dev]"                # this repo + test deps (declared_core is vendored)
 ```
 
 Optional extras:
 
 ```bash
-pip install -e ".[dense]"       # numpy + declared-core[dense] — paraphrase recall booster
-pip install -e ".[portfolio]"   # PyYAML + ngfify — only for the Portfolio Brain (section 5)
+pip install -e ".[dense]"       # numpy — paraphrase recall booster
+pip install -e ".[portfolio]"   # PyYAML — only for the Portfolio Brain (section 5); ngfify is vendored
 ```
 
 Nothing above `declared-core` is a required dependency — `numpy` and

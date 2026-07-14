@@ -27,24 +27,27 @@ classifiers = [
     "Topic :: Software Development :: Libraries",
     "Topic :: Text Processing :: Indexing",
 ]
-# One honest dependency:
-#   declared-core — the retrieval engine (BM25 + structural + RRF + intent).
-# It is local, offline, $0. Dense (semantic) recall stays OPTIONAL below.
-dependencies = [
-    "declared-core>=0.1",
-]
+# No required third-party dependency. The retrieval engine declared_core is
+# VENDORED — a byte-identical top-level copy ships in this repo (see VENDORED.json),
+# so project_memory installs and runs on its own, offline, $0. So are ngfify +
+# universal_parser (the optional portfolio auto-declare path). Do not hand-edit the
+# vendored copies; they are regenerated from canonical via tools/revendor.py.
+# Dense (semantic) recall stays OPTIONAL below.
+dependencies = []
 
 [project.optional-dependencies]
 # Dense (paraphrase) recall is an OPTIONAL booster. Without it, recall runs
 # pure-lexical + structural and is byte-for-byte deterministic. numpy powers the
-# brute-force cosine index (via declared-core[dense]).
-dense = ["declared-core[dense]>=0.1", "numpy>=1.21"]
+# brute-force cosine index (the vendored declared_core's dense path).
+dense = ["numpy>=1.21"]
 # The portfolio-brain layer (project_memory.portfolio, scripts/index_portfolio.py)
 # is an internal capability, not part of the core library: PyYAML reads
 # portfolio-edges.yaml, and ngfify is the auto-declare fallback for repos with
 # no committed ai_card and no "Public API" doc section. Neither is needed to
-# `import project_memory` or use ProjectMemory directly.
-portfolio = ["pyyaml>=6.0", "ngfify>=0.1.0,<0.2"]
+# `import project_memory` or use ProjectMemory directly. ngfify (+ its own parse
+# front-end universal_parser) is vendored in-repo, so no dependency is declared for
+# it here; PyYAML is the only real extra this layer needs.
+portfolio = ["pyyaml>=6.0"]
 # Everything needed to run the test suite.
 dev = ["pytest>=7.0", "numpy>=1.21"]
 
@@ -57,10 +60,13 @@ Changelog = "https://github.com/verbalogicproject-creator/NLKE-project-memory/bl
 project-memory = "project_memory.cli:main"
 
 [tool.setuptools.packages.find]
-include = ["project_memory*"]
+include = ["project_memory*", "declared_core*", "ngfify*", "universal_parser*"]
 
 [tool.setuptools.package-data]
 project_memory = ["demo_corpus/*.json"]
+# Vendored ngfify + universal_parser carry their own demo corpora.
+ngfify = ["demo_corpus/*", "demo_corpus/expected/*"]
+universal_parser = ["demo_corpus/*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

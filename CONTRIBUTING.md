@@ -5,11 +5,11 @@ contributions that keep it that way are the most welcome.
 
 ## Setup
 
-`declared_core` (the engine) is not on PyPI yet — install it first, editable:
+`project_memory` installs standalone — the `declared_core` engine is vendored
+in-repo (see `VENDORED.json`), so there is no sibling repo to install:
 
 ```bash
 python -m venv .venv && source .venv/bin/activate
-pip install -e ../declared_core        # clone it beside this repo
 pip install -e ".[dev]"                # project_memory + pytest + numpy
 pytest                                 # 97 tests, keep them green
 ```
@@ -61,8 +61,8 @@ corpus*, it belongs here. See [`CODEBASE-REPORT.md`](CODEBASE-REPORT.md).
 
 - Match the surrounding code: type hints, `from __future__ import annotations`,
   small functions, docstrings that explain *why*.
-- Don't add a required dependency beyond `declared_core`. `numpy` stays behind
-  `[dense]`.
+- Don't add a required dependency — the vendored `declared_core` engine adds
+  none. `numpy` stays behind `[dense]`.
 - Don't claim a feature in the README that isn't proven — put it in
   [`ROADMAP.md`](ROADMAP.md). The audience has real judgment.
 
