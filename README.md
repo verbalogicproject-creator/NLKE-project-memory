@@ -1,6 +1,6 @@
 # project_memory
 
-[![tests](https://img.shields.io/badge/tests-260%20passing-brightgreen)](tests/)
+[![tests](https://img.shields.io/badge/tests-325%20passing-brightgreen)](tests/)
 [![python](https://img.shields.io/badge/python-3.10%2B-blue)](pyproject.toml)
 [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 [![deps](https://img.shields.io/badge/required%20deps-0-blue)](pyproject.toml)

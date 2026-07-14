@@ -38,7 +38,7 @@ project-memory demo
 
 ## Verification
 
-- **97 tests**, green in a clean virtualenv.
+- **325 tests**, green in a clean virtualenv.
 - All five `examples/` print `Verify your build: ok`.
 - The MUD verdicts are checked against the methodology's own worked examples
   (clean / bridge / Layer-1 refusal / Layer-3 refusal).

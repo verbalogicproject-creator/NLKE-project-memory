@@ -26,7 +26,7 @@ pip install -e ".[dev]"
 ## Commands
 
 ```bash
-pytest                                   # full suite (97 tests, keep green)
+pytest                                   # full suite (325 tests, keep green)
 python examples/01_remember_and_recall.py  # examples self-verify ("Verify your build: ok")
 project-memory demo                      # try the packaged demo memory
 project-memory ask "why not X?" --json   # the ask surface, scriptable

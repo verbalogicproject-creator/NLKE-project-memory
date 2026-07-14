@@ -11,7 +11,7 @@ in-repo (see `VENDORED.json`), so there is no sibling repo to install:
 ```bash
 python -m venv .venv && source .venv/bin/activate
 pip install -e ".[dev]"                # project_memory + pytest + numpy
-pytest                                 # 97 tests, keep them green
+pytest                                 # 325 tests, keep them green
 ```
 
 ## The shape of the codebase
