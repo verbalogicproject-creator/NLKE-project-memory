@@ -8,7 +8,7 @@ version = "0.1.0"
 description = "Declared, AI-optional project memory for agents: an append-only episode log + crystallized facts, hybrid recall, natural-language asks, and a MUD epistemic guard that refuses to synthesize contradictory facts. Local-first, $0."
 readme = "README.md"
 requires-python = ">=3.10"
-license = { text = "MIT" }
+license = { text = "Apache-2.0" }
 authors = [{ name = "Eyal Nof" }]
 keywords = [
     "memory", "agent-memory", "episodic-memory", "facts", "recall",
@@ -18,7 +18,7 @@ keywords = [
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
-    "License :: OSI Approved :: MIT License",
+    "License :: OSI Approved :: Apache Software License",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",

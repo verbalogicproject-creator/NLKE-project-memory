@@ -2,7 +2,7 @@
 
 [![tests](https://img.shields.io/badge/tests-325%20passing-brightgreen)](tests/)
 [![python](https://img.shields.io/badge/python-3.10%2B-blue)](pyproject.toml)
-[![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![license](https://img.shields.io/badge/license-Apache--2.0-green)](LICENSE)
 [![deps](https://img.shields.io/badge/required%20deps-0-blue)](pyproject.toml)
 
 **A declared, AI-optional memory for agents and projects.** Remember what happened
@@ -323,4 +323,4 @@ retrieval engine is `declared_core`, extracted from the same lineage.
 
 ## License
 
-MIT © 2026 Eyal Nof. See [`LICENSE`](LICENSE).
+Apache-2.0 © 2026 Eyal Nof. See [`LICENSE`](LICENSE) and [`NOTICE`](NOTICE).
