@@ -33,4 +33,4 @@ This paragraph is the first one after the H1, so ngfify's Markdown deriver shoul
 - Overview
 - Details
 
-> auto-declared by ngfify v0.1.1 from demo_corpus/sample.md on __GENERATED_DATE__
+> auto-declared by ngfify v__VERSION__ from demo_corpus/sample.md on __GENERATED_DATE__

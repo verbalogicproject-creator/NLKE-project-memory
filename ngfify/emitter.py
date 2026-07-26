@@ -14,7 +14,27 @@ from .ai_card import AI_CARD_SLOTS, LIST_SLOTS, AiCard
 from .text_utils import TODO_SENTINEL
 
 _RESERVED_SCALARS = frozenset({"true", "false", "null", "yes", "no", "~", ""})
-_SPECIAL_LEADING_CHARS = ("-", "*", "&", "!", "|", ">", "'", '"', "%", "@", "#", "[", "{")
+
+#: Every YAML 1.2 c-indicator (spec §5.3). A plain scalar may not begin with any of
+#: them, so a value that does must be quoted.
+#:
+#: This was previously a hand-enumerated list missing six of them -- and the one that
+#: mattered was the backtick. Markdown headings routinely open with a code span
+#: (`## \`declared_core.schema\``), the markdown deriver lifts headings straight into
+#: `public_interfaces`, and the result was frontmatter that no YAML parser would
+#: accept. Downstream, `frontmatter_rag` reported those cards as
+#: `skipped_no_frontmatter` -- indistinguishable from a file that simply has none --
+#: so they vanished from the index without an error. 95 headings across 8 repos in
+#: this ecosystem begin with a backtick, nearly all of them in the API- and
+#: CLI-reference chapters, which are the densest docs there are.
+#:
+#: Enumerating by hand is what failed, so `tests/test_ai_card_emitter.py` now
+#: round-trips emitted frontmatter through a real YAML parser rather than trusting
+#: this tuple.
+_SPECIAL_LEADING_CHARS = (
+    "-", "?", ":", ",", "[", "]", "{", "}", "#", "&", "*", "!",
+    "|", ">", "'", '"', "%", "@", "`",
+)
 
 
 def _needs_quoting(value: str) -> bool:

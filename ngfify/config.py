@@ -32,6 +32,19 @@ DEFAULT_HARDCODED_PATH_PATTERNS: tuple[str, ...] = (
     r"[A-Za-z]:\\\\",
 )
 
+#: Directory names `ngfify --tree` walks past. Ecosystem/tooling artefacts and
+#: vendored dependencies -- never a judgement about any one project's layout.
+#: Note this omits `tests`/`fixtures`: a repo's own tests are legitimate
+#: subjects for an ai_card (`refine_kind` has a `test` kind precisely for
+#: them). Callers wanting them gone declare their own `exclude_dir_names`.
+DEFAULT_EXCLUDE_DIR_NAMES: frozenset[str] = frozenset({
+    ".git", ".hg", ".svn",
+    "node_modules", ".venv", "venv", "env", "__pycache__",
+    "dist", "build", ".next", ".nuxt", ".cache",
+    ".pytest_cache", ".mypy_cache", ".ruff_cache", ".tox",
+    "site-packages", ".egg-info", "htmlcov",
+})
+
 
 @dataclass(frozen=True)
 class NgfifyConfig:
@@ -51,6 +64,9 @@ class NgfifyConfig:
         max_graph_rag_entities: cap on `graph_rag_entities` list length.
         output_suffix: appended to the input filename for the default
             output path (spec default: `.ngf.md`, giving `<file>.ngf.md`).
+        exclude_dir_names: directory names `ngfify_tree` walks past. Matched
+            against path components *below* the walk root, so pointing the
+            walk at an excluded directory still works.
     """
 
     audience_default: str = "engineer"
@@ -60,6 +76,7 @@ class NgfifyConfig:
     hardcoded_path_patterns: tuple[str, ...] = DEFAULT_HARDCODED_PATH_PATTERNS
     max_graph_rag_entities: int = 40
     output_suffix: str = ".ngf.md"
+    exclude_dir_names: frozenset[str] = DEFAULT_EXCLUDE_DIR_NAMES
 
 
 def load_config(path: str | Path | None) -> NgfifyConfig:
@@ -79,6 +96,7 @@ def load_config(path: str | Path | None) -> NgfifyConfig:
         ".mjs" = "javascript"
 
         hardcoded_path_patterns = ["/root/", "/srv/myapp/"]
+        exclude_dir_names = [".git", "node_modules", "vendor"]
     """
     if path is None:
         return NgfifyConfig()
@@ -103,6 +121,9 @@ def load_config(path: str | Path | None) -> NgfifyConfig:
         ),
         max_graph_rag_entities=_as_positive_int(raw.get("max_graph_rag_entities"), 40),
         output_suffix=raw.get("output_suffix", ".ngf.md"),
+        exclude_dir_names=frozenset(
+            _as_str_tuple(raw.get("exclude_dir_names"), tuple(DEFAULT_EXCLUDE_DIR_NAMES))
+        ),
     )
 
 

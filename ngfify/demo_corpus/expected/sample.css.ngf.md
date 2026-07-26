@@ -36,4 +36,4 @@ Demo stylesheet for ngfify's CSS deriver.
 - #header
 - --brand-color
 
-> auto-declared by ngfify v0.1.1 from demo_corpus/sample.css on __GENERATED_DATE__
+> auto-declared by ngfify v__VERSION__ from demo_corpus/sample.css on __GENERATED_DATE__

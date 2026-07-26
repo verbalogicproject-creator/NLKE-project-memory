@@ -1,0 +1,16 @@
+[
+  "/root/projects/declared-context/.gitignore",
+  "/root/projects/declared-context/declared_context/__init__.py",
+  "/root/projects/declared-context/declared_context/__main__.py",
+  "/root/projects/declared-context/declared_context/anchors.py",
+  "/root/projects/declared-context/declared_context/budget.py",
+  "/root/projects/declared-context/declared_context/cli.py",
+  "/root/projects/declared-context/declared_context/maps.py",
+  "/root/projects/declared-context/declared_context/mcp_server.py",
+  "/root/projects/declared-context/declared_context/receipt.py",
+  "/root/projects/declared-context/declared_context/select.py",
+  "/root/projects/declared-context/pyproject.toml",
+  "/root/projects/declared-grep/pyproject.toml",
+  "/root/projects/kg-rag-pipeline/fixtures/eco-index/eval_reference.py",
+  "/root/projects/kg-rag-pipeline/repro/repro_eco_index.py"
+]

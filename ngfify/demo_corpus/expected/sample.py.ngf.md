@@ -40,4 +40,4 @@ Tiny demo module for ngfify's Python deriver.
 - load_greeting_config
 - Greeter
 
-> auto-declared by ngfify v0.1.1 from demo_corpus/sample.py on __GENERATED_DATE__
+> auto-declared by ngfify v__VERSION__ from demo_corpus/sample.py on __GENERATED_DATE__

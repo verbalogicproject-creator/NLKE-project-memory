@@ -14,6 +14,17 @@ Quickstart::
     result = ngfify_file("my_module.py")
     print(result.output_path, result.card.public_interfaces)
 
+A whole tree at once::
+
+    from ngfify import ngfify_tree
+
+    result = ngfify_tree("src/", output_dir="cards/", name_prefix="myrepo")
+    print(result.summary())   # "42 written, 3 skipped, 0 failed (of 45 considered)"
+
+Tree mode derives each card from one file in isolation, exactly as
+`ngfify_file` does -- it adds the walk, not cross-file resolution. Nothing is
+dropped silently: every input lands in `results`, `skipped` or `failed`.
+
 Or the packaged demo corpus::
 
     from ngfify import run_demo
@@ -33,6 +44,7 @@ from .detection import Language, UnsupportedFileTypeError
 from .emitter import render_ngf_md
 from .pipeline import NgfifyResult, default_output_path, ngfify_file
 from .text_utils import TODO_SENTINEL
+from .tree import FailedFile, SkippedFile, TreeResult, iter_source_files, ngfify_tree
 
 __all__ = [
     "__version__",
@@ -48,6 +60,11 @@ __all__ = [
     "ngfify_file",
     "NgfifyResult",
     "default_output_path",
+    "ngfify_tree",
+    "TreeResult",
+    "SkippedFile",
+    "FailedFile",
+    "iter_source_files",
     "run_demo",
     "TODO_SENTINEL",
 ]
